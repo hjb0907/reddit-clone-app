@@ -1,13 +1,13 @@
-import { BeforeInsert, Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
-import BaseEntity from "./Entity";
-import {User} from './User'
-import Vote from './Vote';
-import Sub from './Sub';
 import { Exclude, Expose } from 'class-transformer';
+import { BeforeInsert, Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { makeId, slugify } from '../utils/helpers';
+import Comment from './Comment';
+import BaseEntity from './Entity';
+import Sub from './Sub';
+import { User } from './User';
+import Vote from './Vote';
 
 @Entity("posts")
-
 export default class Post extends BaseEntity{
     @Index()
     @Column()
@@ -29,8 +29,8 @@ export default class Post extends BaseEntity{
     @Column()
     username: string;
 
-    @ManyToOne(() => User, (user) => user.posts)
-    @JoinColumn({ name: 'username', referencedColumnName: 'username' })
+    @ManyToOne(() => User, (user) => user.post)
+    @JoinColumn({ name: "username", referencedColumnName: "username" })
     user: User;
 
     @ManyToOne(() => Sub, (sub) => sub.posts)
@@ -38,7 +38,7 @@ export default class Post extends BaseEntity{
     sub: Sub;
 
     @Exclude()
-    @OneToMany(()=>Comment, (Comment) => Comment.post)
+    @OneToMany(()=>Comment, (comment) => comment.post)
     comments: Comment[];
 
 
@@ -60,8 +60,8 @@ export default class Post extends BaseEntity{
 
     protected userVote: number;
 
-    setUserVote(user: User){
-        const index= this.votes?.findIndex(v => v.username === user.username);
+    setUserVote(user: User) {
+        const index = this.votes?.findIndex(v => v.username === user.username);
         this.userVote = index > -1 ? this.votes[index].value : 0;
     }
 
